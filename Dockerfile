@@ -21,7 +21,7 @@ RUN . /clone.sh BLIP https://github.com/salesforce/BLIP.git 48211a1594f1321b00f1
 
 #RUN wget -O /model.safetensors https://civitai.com/api/download/models/15236
 ADD model.safetensors /
-ADD model2.safetensors /
+# ADD model2.safetensors /
 
 # ---------------------------------------------------------------------------- #
 #                        Stage 3: Build the final image                        #
@@ -52,7 +52,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY --from=download /repositories/ ${ROOT}/repositories/
 COPY --from=download /model.safetensors /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
-COPY --from=download /model2.safetensors /stable-diffusion-webui/models/Stable-diffusion/model2.safetensors
+# COPY --from=download /model2.safetensors /stable-diffusion-webui/models/Stable-diffusion/model2.safetensors
 RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/data/* ${ROOT}/interrogate
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r ${ROOT}/repositories/CodeFormer/requirements.txt
@@ -74,7 +74,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 ADD src .
 
 COPY builder/cache.py /stable-diffusion-webui/cache.py
-RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model.safetensors && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model2.safetensors
+RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
 
 # Cleanup section (Worker Template)
 RUN apt-get autoremove -y && \
