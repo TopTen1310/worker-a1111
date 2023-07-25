@@ -17,10 +17,12 @@ RUN . /clone.sh CodeFormer https://github.com/sczhou/CodeFormer.git c5b4593074ba
 
 RUN . /clone.sh BLIP https://github.com/salesforce/BLIP.git 48211a1594f1321b00f14c9f7a5b4813144b2fb9 && \
     . /clone.sh k-diffusion https://github.com/crowsonkb/k-diffusion.git 5b3af030dd83e0297272d861c19477735d0317ec && \
-    . /clone.sh clip-interrogator https://github.com/pharmapsychotic/clip-interrogator 2486589f24165c8e3b303f84e9dbbea318df83e8
+    . /clone.sh clip-interrogator https://github.com/pharmapsychotic/clip-interrogator 2486589f24165c8e3b303f84e9dbbea318df83e8 && \
+    . /clone.sh kohya_ss_api https://github.com/TopTen1310/kohya_ss_api.git be28a386b011a58010c2e0a7899cd6b5a6798875
 
 #RUN wget -O /model.safetensors https://civitai.com/api/download/models/15236
 ADD model.safetensors /
+ADD reg_data ./reg_data
 # ADD model2.safetensors /
 
 # ---------------------------------------------------------------------------- #
@@ -70,6 +72,9 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     git fetch && \
     git reset --hard ${SHA} && \
     pip install -r requirements_versions.txt
+
+RUN cd kohya_ss_api && \
+    pip install -r requirements.txt
 
 ADD src .
 

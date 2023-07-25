@@ -31,13 +31,19 @@ def wait_for_service(url):
 
 def run_inference(params):
     config = {
-        "baseurl": "http://127.0.0.1:3000",
+        "sd": "http://127.0.0.1:3000",
+        "lora": "http://127.0.0.1:7861",
         "api": {
             "txt2img":  ("POST", "/sdapi/v1/txt2img"),
             "img2img":  ("POST", "/sdapi/v1/img2img"),
             "getModels": ("GET", "/sdapi/v1/sd-models"),
             "getOptions": ("GET", "/sdapi/v1/options"),
             "setOptions": ("POST", "/sdapi/v1/options"),
+            "createTraining": ("POST", "/loraapi/v1/training"),
+            "getTrainingLog": ("GET", "/loraapi/v1/training"),
+            "checkTraining": ("POST", "/loraapi/v1/training"),
+            "terminateTraining": ("PUT", "/loraapi/v1/training"),
+            "deleteTraining": ("DELETE", "/loraapi/v1/training"),
         },
         "timeout": 600
     }
@@ -54,17 +60,35 @@ def run_inference(params):
     api_path = api_config[1]
 
     response = {}
+    baseUrl = config["sd"]
+    if "Training" in api_name and api_name != "createTraining":
+        train_id = params["train_id"]
+        api_path += f"/{train_id}"
+        baseUrl = config["lora"]
+
+    if api_name == "createTraining":
+        baseUrl = config["lora"]
 
     if api_verb == "GET":
         response = automatic_session.get(
-                url='%s%s' % (config["baseurl"], api_path),
-                timeout=config["timeout"])
+            url='%s%s' % (baseUrl, api_path),
+            timeout=config["timeout"])
 
     if api_verb == "POST":
         response = automatic_session.post(
-                url='%s%s' % (config["baseurl"], api_path),
-                json=params, 
-                timeout=config["timeout"])
+            url='%s%s' % (baseUrl, api_path),
+                json=params,
+            timeout=config["timeout"])
+
+    if api_verb == "PUT":
+        response = automatic_session.put(
+            url='%s%s' % (baseUrl, api_path),
+            timeout=config["timeout"])
+
+    if api_verb == "DELETE":
+        response = automatic_session.delete(
+            url='%s%s' % (baseUrl, api_path),
+            timeout=config["timeout"])
 
     return response.json()
 
