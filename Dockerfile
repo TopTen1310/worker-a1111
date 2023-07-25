@@ -58,7 +58,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 RUN --mount=type=cache,target=/root/.cache/pip \
     git clone https://github.com/TopTen1310/kohya_ss_api.git && \ 
     cd kohya_ss_api && \
-    git checkout bbb972fb82ff8ae82540ac7a4d2e4dc1353e4327 && \
+    git checkout 67a2c9bd74991ff86056e7f6e6390a31b2536349 && \
     pip install -r requirements.txt 
 
 COPY --from=download /repositories/ ${ROOT}/repositories/
