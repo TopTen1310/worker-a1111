@@ -55,10 +55,11 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     git reset --hard 89f9faa63388756314e8a1d96cf86bf5e0663045 && \
     pip install -r requirements_versions.txt
 
+# Force Docker to re-clone and install from the kohya_ss_api repo
 RUN --mount=type=cache,target=/root/.cache/pip \
-    git clone https://github.com/TopTen1310/kohya_ss_api.git && \
+    git clone https://github.com/TopTen1310/kohya_ss_api.git && \ 
     cd kohya_ss_api && \
-    pip install -r requirements.txt
+    pip install -r requirements.txt 
 
 COPY --from=download /repositories/ ${ROOT}/repositories/
 COPY --from=download /model.safetensors /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
