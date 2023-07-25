@@ -28,70 +28,70 @@ ADD model.safetensors /
 # ---------------------------------------------------------------------------- #
 FROM python:3.10.9-slim
 
-# ENV DEBIAN_FRONTEND=noninteractive \
-#     PIP_PREFER_BINARY=1 \
-#     LD_PRELOAD=libtcmalloc.so \
-#     ROOT=/stable-diffusion-webui \
-#     PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive \
+    PIP_PREFER_BINARY=1 \
+    LD_PRELOAD=libtcmalloc.so \
+    ROOT=/stable-diffusion-webui \
+    PYTHONUNBUFFERED=1
 
-# SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# RUN apt update && \
-#     apt-get update && \
-#     apt-get install -y libgl1-mesa-glx && \
-#     apt-get install -y libglib2.0-0 && \
-#     apt-get install -y python3-tk && \
-#     apt install -y \
-#     fonts-dejavu-core rsync git jq moreutils aria2 wget libgoogle-perftools-dev procps && \
-#     apt-get autoremove -y && rm -rf /var/lib/apt/lists/* && apt-get clean -y
+RUN apt update && \
+    apt-get update && \
+    apt-get install -y libgl1-mesa-glx && \
+    apt-get install -y libglib2.0-0 && \
+    apt-get install -y python3-tk && \
+    apt install -y \
+    fonts-dejavu-core rsync git jq moreutils aria2 wget libgoogle-perftools-dev procps && \
+    apt-get autoremove -y && rm -rf /var/lib/apt/lists/* && apt-get clean -y
 
-# RUN --mount=type=cache,target=/cache --mount=type=cache,target=/root/.cache/pip \
-#     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+RUN --mount=type=cache,target=/cache --mount=type=cache,target=/root/.cache/pip \
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
-# RUN --mount=type=cache,target=/root/.cache/pip \
-#     git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git && \
-#     cd stable-diffusion-webui && \
-#     git reset --hard 89f9faa63388756314e8a1d96cf86bf5e0663045 && \
-#     pip install -r requirements_versions.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git && \
+    cd stable-diffusion-webui && \
+    git reset --hard 89f9faa63388756314e8a1d96cf86bf5e0663045 && \
+    pip install -r requirements_versions.txt
 
-# # Force Docker to re-clone and install from the kohya_ss_api repo
-# RUN --mount=type=cache,target=/root/.cache/pip \
-#     git clone https://github.com/TopTen1310/kohya_ss_api.git && \ 
-#     cd kohya_ss_api && \
-#     git checkout 5993f03e72140638db5cd79b4947e92b09ab474a && \
-#     pip install -r requirements.txt 
+# Force Docker to re-clone and install from the kohya_ss_api repo
+RUN --mount=type=cache,target=/root/.cache/pip \
+    git clone https://github.com/TopTen1310/kohya_ss_api.git && \ 
+    cd kohya_ss_api && \
+    git checkout 5993f03e72140638db5cd79b4947e92b09ab474a && \
+    pip install -r requirements.txt 
 
-# COPY --from=download /repositories/ ${ROOT}/repositories/
-# COPY --from=download /model.safetensors /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
-# # COPY --from=download /model2.safetensors /stable-diffusion-webui/models/Stable-diffusion/model2.safetensors
-# RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/data/* ${ROOT}/interrogate
-# RUN --mount=type=cache,target=/root/.cache/pip \
-#     pip install -r ${ROOT}/repositories/CodeFormer/requirements.txt
+COPY --from=download /repositories/ ${ROOT}/repositories/
+COPY --from=download /model.safetensors /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
+# COPY --from=download /model2.safetensors /stable-diffusion-webui/models/Stable-diffusion/model2.safetensors
+RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/data/* ${ROOT}/interrogate
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r ${ROOT}/repositories/CodeFormer/requirements.txt
 
-# # Install Python dependencies (Worker Template)
-# COPY builder/requirements.txt /requirements.txt
-# RUN --mount=type=cache,target=/root/.cache/pip \
-#     pip install --upgrade pip && \
-#     pip install --upgrade -r /requirements.txt --no-cache-dir && \
-#     rm /requirements.txt
+# Install Python dependencies (Worker Template)
+COPY builder/requirements.txt /requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip && \
+    pip install --upgrade -r /requirements.txt --no-cache-dir && \
+    rm /requirements.txt
 
-# ARG SHA=89f9faa63388756314e8a1d96cf86bf5e0663045
-# RUN --mount=type=cache,target=/root/.cache/pip \
-#     cd stable-diffusion-webui && \
-#     git fetch && \
-#     git reset --hard ${SHA} && \
-#     pip install -r requirements_versions.txt
+ARG SHA=89f9faa63388756314e8a1d96cf86bf5e0663045
+RUN --mount=type=cache,target=/root/.cache/pip \
+    cd stable-diffusion-webui && \
+    git fetch && \
+    git reset --hard ${SHA} && \
+    pip install -r requirements_versions.txt
 
 ADD src .
 ADD reg_data ./reg_data
 
-# COPY builder/cache.py /stable-diffusion-webui/cache.py
-# RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
+COPY builder/cache.py /stable-diffusion-webui/cache.py
+RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
 
-# # Cleanup section (Worker Template)
-# RUN apt-get autoremove -y && \
-#     apt-get clean -y && \
-#     rm -rf /var/lib/apt/lists/*
+# Cleanup section (Worker Template)
+RUN apt-get autoremove -y && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/*
 
-# RUN chmod +x /start.sh
+RUN chmod +x /start.sh
 CMD /start.sh
