@@ -63,6 +63,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY --from=download /repositories/ ${ROOT}/repositories/
 COPY --from=download /model.safetensors /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
+COPY --from=download /model.safetensors /kohya_ss_api/model.safetensors
 # COPY --from=download /model2.safetensors /stable-diffusion-webui/models/Stable-diffusion/model2.safetensors
 RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/data/* ${ROOT}/interrogate
 RUN --mount=type=cache,target=/root/.cache/pip \
@@ -84,7 +85,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 ADD src .
 ADD reg_data ./reg_data
-ADD model.safetensors .
 
 COPY builder/cache.py /stable-diffusion-webui/cache.py
 RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
