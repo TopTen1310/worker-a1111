@@ -17,8 +17,7 @@ RUN . /clone.sh CodeFormer https://github.com/sczhou/CodeFormer.git c5b4593074ba
 
 RUN . /clone.sh BLIP https://github.com/salesforce/BLIP.git 48211a1594f1321b00f14c9f7a5b4813144b2fb9 && \
     . /clone.sh k-diffusion https://github.com/crowsonkb/k-diffusion.git 5b3af030dd83e0297272d861c19477735d0317ec && \
-    . /clone.sh clip-interrogator https://github.com/pharmapsychotic/clip-interrogator 2486589f24165c8e3b303f84e9dbbea318df83e8 && \
-    . /clone.sh kohya_ss_api https://github.com/TopTen1310/kohya_ss_api.git be28a386b011a58010c2e0a7899cd6b5a6798875
+    . /clone.sh clip-interrogator https://github.com/pharmapsychotic/clip-interrogator 2486589f24165c8e3b303f84e9dbbea318df83e8
 
 #RUN wget -O /model.safetensors https://civitai.com/api/download/models/15236
 ADD model.safetensors /
@@ -47,6 +46,11 @@ RUN --mount=type=cache,target=/cache --mount=type=cache,target=/root/.cache/pip 
     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 RUN --mount=type=cache,target=/root/.cache/pip \
+    git clone https://github.com/TopTen1310/kohya_ss_api.git && \
+    cd kohya_ss_api && \
+    pip install -r requirements.txt
+
+RUN --mount=type=cache,target=/root/.cache/pip \
     git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git && \
     cd stable-diffusion-webui && \
     git reset --hard 89f9faa63388756314e8a1d96cf86bf5e0663045 && \
@@ -72,9 +76,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     git fetch && \
     git reset --hard ${SHA} && \
     pip install -r requirements_versions.txt
-
-RUN cd kohya_ss_api && \
-    pip install -r requirements.txt
 
 ADD src .
 
