@@ -58,7 +58,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 RUN --mount=type=cache,target=/root/.cache/pip \
     git clone https://github.com/TopTen1310/kohya_ss_api.git && \ 
     cd kohya_ss_api && \
-    git checkout 5993f03e72140638db5cd79b4947e92b09ab474a && \
+    git checkout bbb972fb82ff8ae82540ac7a4d2e4dc1353e4327 && \
     pip install -r requirements.txt 
 
 COPY --from=download /repositories/ ${ROOT}/repositories/
@@ -84,6 +84,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 ADD src .
 ADD reg_data ./reg_data
+ADD model.safetensors .
 
 COPY builder/cache.py /stable-diffusion-webui/cache.py
 RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
