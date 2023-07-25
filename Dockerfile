@@ -46,15 +46,15 @@ RUN --mount=type=cache,target=/cache --mount=type=cache,target=/root/.cache/pip 
     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-    git clone https://github.com/TopTen1310/kohya_ss_api.git && \
-    cd kohya_ss_api && \
-    pip install -r requirements.txt
-
-RUN --mount=type=cache,target=/root/.cache/pip \
     git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git && \
     cd stable-diffusion-webui && \
     git reset --hard 89f9faa63388756314e8a1d96cf86bf5e0663045 && \
     pip install -r requirements_versions.txt
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+    git clone https://github.com/TopTen1310/kohya_ss_api.git && \
+    cd kohya_ss_api && \
+    pip install -r requirements.txt
 
 COPY --from=download /repositories/ ${ROOT}/repositories/
 COPY --from=download /model.safetensors /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
