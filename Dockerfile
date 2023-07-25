@@ -21,7 +21,7 @@ RUN . /clone.sh BLIP https://github.com/salesforce/BLIP.git 48211a1594f1321b00f1
 
 #RUN wget -O /model.safetensors https://civitai.com/api/download/models/15236
 ADD model.safetensors /
-ADD reg_data ./reg_data
+ADD reg_data /
 # ADD model2.safetensors /
 
 # ---------------------------------------------------------------------------- #
@@ -63,7 +63,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r requirements.txt 
 
 COPY --from=download /repositories/ ${ROOT}/repositories/
-COPY --from=download /reg_data/ /reg_data/
+COPY --from=download /reg_data /reg_data
 COPY --from=download /model.safetensors /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
 # COPY --from=download /model2.safetensors /stable-diffusion-webui/models/Stable-diffusion/model2.safetensors
 RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/data/* ${ROOT}/interrogate
