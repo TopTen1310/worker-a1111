@@ -26,7 +26,7 @@ ADD model.safetensors /
 # ---------------------------------------------------------------------------- #
 #                        Stage 3: Build the final image                        #
 # ---------------------------------------------------------------------------- #
-FROM python:3.10.9-slim
+FROM nvidia/cuda:11.4.1-cudnn8-runtime-ubuntu20.04
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_PREFER_BINARY=1 \
