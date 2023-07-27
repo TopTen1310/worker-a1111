@@ -36,9 +36,32 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+# Install some basic utilities
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    sudo \
+    git \
+    bzip2 \
+    libx11-6 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a working directory
+RUN mkdir /app
+WORKDIR /app
+
+# Install Python 3.10
+RUN curl -O https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz && \
+    tar -xvf Python-3.10.0.tgz && \
+    cd Python-3.10.0 && \
+    ./configure && make && make install && \
+    cd .. && rm -rf Python-3.10.0
+
+# Verify that Python 3.10 is installed
+RUN python3 --version
+
 RUN apt update && \
     apt-get update && \
-    apt-get install -y --no-install-recommends python3 python3-pip && \
     apt-get install -y libgl1-mesa-glx && \
     apt-get install -y libglib2.0-0 && \
     apt-get install -y python3-tk && \
