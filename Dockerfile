@@ -38,6 +38,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apt update && \
     apt-get update && \
+    apt-get install -y --no-install-recommends python3 python3-pip && \
     apt-get install -y libgl1-mesa-glx && \
     apt-get install -y libglib2.0-0 && \
     apt-get install -y python3-tk && \
