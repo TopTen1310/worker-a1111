@@ -77,7 +77,7 @@ RUN apt update && \
 RUN pip install --upgrade pip
 
 RUN --mount=type=cache,target=/cache --mount=type=cache,target=/root/.cache/pip \
-    pip install setuptools>=40.8.0 && pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+    pip install setuptools && pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 RUN --mount=type=cache,target=/root/.cache/pip \
     git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git && \
