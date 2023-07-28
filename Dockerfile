@@ -63,6 +63,8 @@ ENV PATH="/usr/local/bin:${PATH}"
 RUN python3 --version
 RUN pip3 --version
 
+RUN ln -s $(which pip3) /usr/local/bin/pip
+
 RUN apt update && \
     apt-get update && \
     apt-get install -y libgl1-mesa-glx && \
