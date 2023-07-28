@@ -30,7 +30,6 @@ FROM nvidia/cuda:12.2.0-runtime-ubuntu20.04
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_PREFER_BINARY=1 \
-    LD_PRELOAD=libtcmalloc.so \
     ROOT=/stable-diffusion-webui \
     PYTHONUNBUFFERED=1
 
@@ -45,6 +44,7 @@ RUN apt-get update && apt-get install -y \
     libx11-6 \
     gcc \
     make \
+    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python 3.10
