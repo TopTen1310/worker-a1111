@@ -36,7 +36,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Install some basic utilities
 RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
@@ -44,6 +43,8 @@ RUN apt-get update && apt-get install -y \
     git \
     bzip2 \
     libx11-6 \
+    gcc \
+    make \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python 3.10
