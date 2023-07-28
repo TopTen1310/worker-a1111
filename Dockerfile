@@ -26,44 +26,15 @@ ADD model.safetensors /
 # ---------------------------------------------------------------------------- #
 #                        Stage 3: Build the final image                        #
 # ---------------------------------------------------------------------------- #
-FROM nvidia/cuda:12.2.0-runtime-ubuntu20.04
+FROM python:3.10.9-slim
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_PREFER_BINARY=1 \
+    LD_PRELOAD=libtcmalloc.so \
     ROOT=/stable-diffusion-webui \
     PYTHONUNBUFFERED=1
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-# Install some basic utilities
-RUN apt-get update && apt-get install -y \
-    curl \
-    ca-certificates \
-    sudo \
-    git \
-    bzip2 \
-    libx11-6 \
-    gcc \
-    make \
-    zlib1g-dev \
-    libffi-dev \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Python 3.10
-RUN curl -O https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz && \
-    tar -xvf Python-3.10.0.tgz && \
-    cd Python-3.10.0 && \
-    ./configure --with-ensurepip=install && make && make install && \
-    cd .. && rm -rf Python-3.10.0
-
-# Verify that Python 3.10 is installed
-ENV PATH="/usr/local/bin:${PATH}"
-
-RUN python3 --version
-RUN pip3 --version
-
-RUN ln -s $(which pip3) /usr/local/bin/pip
 
 RUN apt update && \
     apt-get update && \
@@ -71,13 +42,17 @@ RUN apt update && \
     apt-get install -y libglib2.0-0 && \
     apt-get install -y python3-tk && \
     apt install -y \
-    fonts-dejavu-core rsync git jq moreutils aria2 wget libgoogle-perftools-dev procps && \
+    dpkg fonts-dejavu-core rsync git jq moreutils aria2 wget libgoogle-perftools-dev procps && \
     apt-get autoremove -y && rm -rf /var/lib/apt/lists/* && apt-get clean -y
 
-RUN pip install --upgrade pip
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-cudart-11-0_11.0.221-1_amd64.deb
+
+RUN dpkg -i cuda-cudart-11-0_11.0.221-1_amd64.deb
+
+RUN rm cuda-cudart-11-0_11.0.221-1_amd64.deb
 
 RUN --mount=type=cache,target=/cache --mount=type=cache,target=/root/.cache/pip \
-    pip install setuptools && pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 RUN --mount=type=cache,target=/root/.cache/pip \
     git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git && \
