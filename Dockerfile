@@ -46,10 +46,6 @@ RUN apt-get update && apt-get install -y \
     libx11-6 \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a working directory
-RUN mkdir /app
-WORKDIR /app
-
 # Install Python 3.10
 RUN curl -O https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz && \
     tar -xvf Python-3.10.0.tgz && \
