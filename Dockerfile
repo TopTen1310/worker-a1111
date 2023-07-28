@@ -74,6 +74,8 @@ RUN apt update && \
     fonts-dejavu-core rsync git jq moreutils aria2 wget libgoogle-perftools-dev procps && \
     apt-get autoremove -y && rm -rf /var/lib/apt/lists/* && apt-get clean -y
 
+RUN pip install --upgrade pip
+
 RUN --mount=type=cache,target=/cache --mount=type=cache,target=/root/.cache/pip \
     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
