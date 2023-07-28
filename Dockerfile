@@ -58,7 +58,10 @@ RUN curl -O https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz && \
     cd .. && rm -rf Python-3.10.0
 
 # Verify that Python 3.10 is installed
+ENV PATH="/usr/local/bin:${PATH}"
+
 RUN python3 --version
+RUN pip3 --version
 
 RUN apt update && \
     apt-get update && \
