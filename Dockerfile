@@ -57,6 +57,10 @@ RUN curl -O https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz && \
 # Verify that Python 3.10 is installed
 RUN python3 --version
 
+# Install pip
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    python3 get-pip.py
+
 RUN apt update && \
     apt-get update && \
     apt-get install -y libgl1-mesa-glx && \
