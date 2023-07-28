@@ -35,6 +35,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+# Install some basic utilities
 RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
@@ -45,21 +46,19 @@ RUN apt-get update && apt-get install -y \
     gcc \
     make \
     zlib1g-dev \
+    libffi-dev \
+    libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python 3.10
 RUN curl -O https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz && \
     tar -xvf Python-3.10.0.tgz && \
     cd Python-3.10.0 && \
-    ./configure && make && make install && \
+    ./configure --with-ensurepip=install && make && make install && \
     cd .. && rm -rf Python-3.10.0
 
 # Verify that Python 3.10 is installed
 RUN python3 --version
-
-# Install pip
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-    python3 get-pip.py
 
 RUN apt update && \
     apt-get update && \
